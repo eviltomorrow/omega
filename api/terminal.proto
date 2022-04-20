@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "./;pb";
+package omega;
+
+service Terminal {
+    rpc Create(Connection) returns (google.protobuf.StringValue){}
+    rpc Exec(stream Data) returns (stream Data){}
+    rpc ChangeWindow(WinSize) returns (google.protobuf.Empty){}
+}
+
+message Connection {
+    enum Mode {
+        LOCAL = 0;
+        SSH = 1;
+    }
+    Mode mode = 1;
+    WinSize ws = 2;
+    Resource resource = 3;
+}
+
+message Resource {
+    string host = 1;
+    int32 port = 2;
+    string username = 3;
+    string password = 4;
+    bytes pk = 5;
+    int32 timeout = 6;
+}
+
+message WinSize {
+    string session_id = 1;
+    int32 rows = 2;
+    int32 cols = 3;
+}
+
+message Data {
+    string session_id = 1;
+    bytes buf = 2;
+}

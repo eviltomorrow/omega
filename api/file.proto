@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "./;pb";
+package omega;
+
+service File {
+    rpc Write(stream Buffer) returns (google.protobuf.Empty){}
+    rpc Read(google.protobuf.StringValue) returns (stream Buffer){}
+    rpc GetInfo(google.protobuf.StringValue) returns (Info){}
+    rpc SetMode(Mode) returns (google.protobuf.Empty){}
+}
+
+message Buffer {
+    string path =1;
+    bytes buf = 2;
+}
+
+message Info {
+    string name = 1;
+    int64 size = 2;
+    int32 mode = 3;
+    int64 mod_time = 4;
+    bool is_dir = 5;
+    string md5 = 6;
+    bool exist = 7;
+}
+
+message Mode {
+    string path = 1;
+    int32 mode = 2;
+}

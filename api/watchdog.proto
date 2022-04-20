@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option go_package = "./;pb";
+package omega;
+
+service Watchdog {
+    rpc Notify(Signal) returns (google.protobuf.Int32Value){}
+    rpc Pull(google.protobuf.StringValue) returns (google.protobuf.StringValue){}
+}
+
+message Signal {
+    enum Sig {
+        QUIT = 0;
+        UP = 1;
+    }
+    Sig signal = 1;
+}

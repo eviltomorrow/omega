@@ -1,0 +1,42 @@
+omega-ctl --- watchdog (完成)
+          |      |
+          |      |- notify (--addr, --sig)
+          |      |     |
+          |      |     |- --up 
+          |      |     |
+          |      |     |- --quit
+          |      |
+          |      |- pull (--addr, --tag)
+          |
+          |--- omega (测试)
+          |      | 
+          |      |- version (--addr)
+          |      |
+          |      |- system (--addr)
+          |      |
+          |      |- exec (--addr, --c, --timeout)
+          |      |
+          |      |- ping (--addr)
+          |      |
+          |      |- upload (--addr, --local, --remote)
+          |      |
+          |      |- download (--addr, --local, --remote)
+          |      |
+          |      |- terminal (--addr)
+          |
+          |--- hub
+          |      |
+          |      |- push (--local, --release_note)
+          |      |
+          |      |- del (--tag)
+          |      |
+          |      |- list
+          |      
+          |--- service (完成)
+          |      |
+          |      |- list (--group, --type)
+          |
+          |- install (--conf)
+          |
+          |- uninstall (--conf)
+    

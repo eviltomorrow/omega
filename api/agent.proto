@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "./;pb";
+package omega;
+
+service Agent {
+    rpc GetVersion(google.protobuf.Empty) returns (google.protobuf.StringValue){}
+    rpc GetSystem(google.protobuf.Empty) returns (google.protobuf.StringValue){}
+    rpc Ping(google.protobuf.Empty) returns (google.protobuf.StringValue){}
+}
+
+

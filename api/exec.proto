@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option go_package = "./;pb";
+package omega;
+
+service Exec {
+    rpc Run(C) returns (google.protobuf.StringValue){}
+}
+
+message C {
+    enum Type {
+        CMD = 0;
+        SHELL = 1;
+        PYTHON = 2;
+    }
+    Type type = 1;
+    string text = 2;
+    int64 timeout = 3;
+}

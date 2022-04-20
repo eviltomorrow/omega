@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "./;pb";
+package omega;
+
+service Hub{
+    rpc Pull(google.protobuf.StringValue) returns (stream Image){}
+    rpc Push(stream Image) returns (google.protobuf.StringValue){}
+    rpc List(google.protobuf.Empty) returns  (ImageDesc){}
+    rpc Del(google.protobuf.StringValue) returns (google.protobuf.StringValue){}
+}
+
+message Image {
+    string release_notes = 1;
+    string tag = 2;
+    string md5 = 3;
+    bytes buf = 4;
+    string create_time = 5;
+}
+
+message ImageDesc {
+    repeated Image images = 1;
+}
