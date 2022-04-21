@@ -186,6 +186,7 @@ func Download(target string, local string, remote string) error {
 				signal <- err
 				return
 			}
+
 			pipe <- data.Buf
 			counter <- len(data.Buf)
 		}

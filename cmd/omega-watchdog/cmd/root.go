@@ -79,7 +79,7 @@ var root = &cobra.Command{
 		registerCleanFuncs(server.RevokeEtcdConn)
 
 		go func() {
-			var pidFile = filepath.Join(system.RootDir, "../var/run/omega.pid")
+			var pidFile = "../var/run/omega.pid"
 			alock, err := lock.CreateFileLock(pidFile)
 			if err != nil {
 				p, err := self.LoadChild(pidFile)
