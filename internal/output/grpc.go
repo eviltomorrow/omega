@@ -116,7 +116,7 @@ func (gc *GrpcClient) Start() {
 
 				}
 			}
-			zlog.Info("Gather and send metric to collector success", zap.Int("metrics-count", len(data.MetricFamilies)))
+			// zlog.Info("Gather and send metric to collector success", zap.Int("metrics-count", len(data.MetricFamilies)))
 		}
 	}()
 }
