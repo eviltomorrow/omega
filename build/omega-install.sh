@@ -62,7 +62,8 @@ function prepareEnv() {
             kill -3  $(cat omega/var/run/omega.pid)
         fi
 
-        rm -rf omega
+        rm -rf omega/bin
+        rm -rf omega/var
     fi 
 }
 

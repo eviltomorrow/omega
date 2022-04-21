@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"syscall"
 
+	"github.com/eviltomorrow/omega/internal/api/hub"
 	"github.com/eviltomorrow/omega/internal/conf"
 	server "github.com/eviltomorrow/omega/internal/server/omega-hub"
 	"github.com/eviltomorrow/omega/internal/system"
@@ -119,6 +120,9 @@ func setupVars() {
 	server.Port = DefaultGlobal.Global.GrpcServerPort
 	server.Endpoints = DefaultGlobal.Global.EtcdEndpoints
 	server.Key = fmt.Sprintf("%s/omega-hub", self.EtcdKeyPrefix)
+	hub.BinDir = filepath.Join(system.RootDir, hub.BinDir)
+	hub.ImageDir = filepath.Join(system.RootDir, hub.ImageDir)
+	hub.ImageLockFile = filepath.Join(system.RootDir, hub.ImageLockFile)
 }
 
 func registerCleanFuncs(f func() error) {
