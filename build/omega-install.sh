@@ -39,27 +39,27 @@ function prepareEnv() {
     fi
 
     if [ -d ${omega_home} ]; then
-        if [ ! -d "omega/bin" ]; then
-            echo "omega/bin not exist[systemd], please change install dir"
+        if [ ! -d "${omega_home}/bin" ]; then
+            echo "${omega_home}/bin not exist[systemd], please change install dir"
             exit 0
         fi
-        if [ ! -e "omega/bin/omega-watchdog" ]; then
-            echo "omega/bin/omega-watchdog not exist, please change install dir"
+        if [ ! -e "${omega_home}/bin/omega-watchdog" ]; then
+            echo "${omega_home}/bin/omega-watchdog not exist, please change install dir"
             exit 0
         fi
-        if [ ! -d "omega/etc" ]; then
-            echo "omega/etc not exist[systemd], please change install dir"
+        if [ ! -d "${omega_home}/etc" ]; then
+            echo "${omega_home}/etc not exist[systemd], please change install dir"
             exit 0
         fi
-        if [ ! -e "omega/etc/omega.conf" ]; then
-            echo "omega/etc/omega.conf not exist[systemd], please change install dir"
+        if [ ! -e "${omega_home}/etc/omega.conf" ]; then
+            echo "${omega_home}/etc/omega.conf not exist[systemd], please change install dir"
             exit 0
         fi
-        if [ -e "omega/var/run/omega-watchdog.pid" ]; then
-            kill -3 $(cat omega/var/run/omega-watchdog.pid)
+        if [ -e "${omega_home}/var/run/omega-watchdog.pid" ]; then
+            kill -3 $(cat ${omega_home}/var/run/omega-watchdog.pid)
         fi
         if [ -e "omega/var/run/omega.pid" ]; then
-            kill -3  $(cat omega/var/run/omega.pid)
+            kill -3  $(cat ${omega_home}/var/run/omega.pid)
         fi
 
         rm -rf omega/bin
@@ -104,6 +104,7 @@ function startupOmega() {
 
     while :
     do
+        sleep 1
         if [ -e ../log/error.log ]; then
             errlog=$(tail -n 1 ../log/error.log)
             echo ${errlog}
@@ -117,7 +118,7 @@ function startupOmega() {
                 exit 0  
             fi
         fi
-        sleep 1
+
     done
 }
 
