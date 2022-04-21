@@ -16,6 +16,7 @@ var omega_root = &cobra.Command{
 	Short: "omega's api support",
 	Long:  "  \r\nomega-ctl omega api support",
 	Run: func(cmd *cobra.Command, args []string) {
+		cmd.Help()
 	},
 }
 
