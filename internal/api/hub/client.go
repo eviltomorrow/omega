@@ -15,6 +15,7 @@ import (
 	"github.com/eviltomorrow/omega/pkg/exec"
 	"github.com/eviltomorrow/omega/pkg/file"
 	"github.com/eviltomorrow/omega/pkg/self"
+	"golang.org/x/time/rate"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/balancer/roundrobin"
 	"google.golang.org/grpc/credentials/insecure"
@@ -88,7 +89,11 @@ func Push(local string, releaseNote string) (string, error) {
 	defer p.Close()
 	defer close(counter)
 
-	var buf [1024 * 8]byte
+	var (
+		buf     [1024 * 8]byte
+		limiter = rate.NewLimiter(rate.Every(time.Second/1000), 1)
+	)
+
 	for {
 		n, err := localF.Read(buf[0:])
 		if err == io.EOF {
@@ -97,6 +102,7 @@ func Push(local string, releaseNote string) (string, error) {
 		if err != nil {
 			return "", err
 		}
+		limiter.WaitN(context.Background(), 1)
 		if err := writer.Send(&pb.Image{Buf: buf[:n]}); err != nil {
 			return "", err
 		}
