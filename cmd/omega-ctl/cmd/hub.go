@@ -8,6 +8,7 @@ import (
 
 	"github.com/eviltomorrow/omega/internal/api/hub"
 	"github.com/eviltomorrow/omega/pkg/self"
+	"github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -39,7 +40,7 @@ var hub_push = &cobra.Command{
 		if err != nil {
 			log.Printf("[E] Push image failure, nest error: %v", err)
 		} else {
-			log.Printf(" | %s", md5)
+			log.Printf(" | %s [%s]", md5, color.GreenString("success"))
 		}
 	},
 }

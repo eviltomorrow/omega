@@ -103,6 +103,7 @@ func Push(local string, releaseNote string) (string, error) {
 			return "", err
 		}
 		limiter.WaitN(context.Background(), 1)
+
 		if err := writer.Send(&pb.Image{Buf: buf[:n]}); err != nil {
 			return "", err
 		}

@@ -6,7 +6,7 @@ import (
 
 	"github.com/creack/pty"
 	"github.com/k0kubun/go-ansi"
-	"github.com/schollz/progressbar"
+	"github.com/schollz/progressbar/v3"
 )
 
 func NewProgressbar(size int, mode string, desc string) (*progressbar.ProgressBar, chan int) {
@@ -31,6 +31,10 @@ func NewProgressbar(size int, mode string, desc string) (*progressbar.ProgressBa
 			width = width - 20
 		}
 		// blank
+		if width > 10 {
+			width = width - 10
+		}
+		// success
 		if width > 10 {
 			width = width - 10
 		}
