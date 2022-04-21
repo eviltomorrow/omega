@@ -70,6 +70,7 @@ function doInstall() {
     tar -zxvf omega.tar.gz > /dev/null
     check0 "tar -zxvf omega.tar.gz"
 
+    chown -R ${USER}:${GROUPS} ${omega_home}
     cd ${omega_home}
     check0 "cd ${omega_home}"
 

@@ -99,15 +99,17 @@ var root = &cobra.Command{
 			loop:
 				for {
 					select {
-					case <-watchdog.Stop:
-						if err := p.Signal(syscall.SIGQUIT); err != nil {
-							log.Printf("[Panic] [Load]Process.Signal(SIGQUIT) failure, nest error: %v\r\n", err)
-							p.Kill()
-						} else {
-							watchdog.Pid <- watchdog.PS{Pid: p.Pid}
-							watchdog.Stop <- struct{}{}
-							break loop
+					case s := <-watchdog.Stop:
+						if s == 1 {
+							if err := p.Signal(syscall.SIGQUIT); err != nil {
+								log.Printf("[Panic] [Load]Process.Signal(SIGQUIT) failure, nest error: %v\r\n", err)
+								p.Kill()
+							}
 						}
+						watchdog.Pid <- watchdog.PS{Pid: p.Pid}
+						watchdog.Stop <- 0
+						break loop
+
 					case <-stop:
 						return
 					}
@@ -143,10 +145,12 @@ var root = &cobra.Command{
 						}
 
 						select {
-						case <-watchdog.Stop:
-							if err := c.Process.Signal(syscall.SIGQUIT); err != nil {
-								log.Printf("[Panic] [Reload]Process.Signal(SIGQUIT) failure, nest error: %v\r\n", err)
-								c.Process.Kill()
+						case s := <-watchdog.Stop:
+							if s == 1 {
+								if err := c.Process.Signal(syscall.SIGQUIT); err != nil {
+									log.Printf("[Panic] [Reload]Process.Signal(SIGQUIT) failure, nest error: %v\r\n", err)
+									c.Process.Kill()
+								}
 							}
 
 							ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
@@ -191,9 +195,9 @@ var root = &cobra.Command{
 					}(cmd)
 					sig <- cmd.Wait()
 					close(sig)
-					watchdog.Stop <- struct{}{}
-
+					watchdog.Stop <- 0
 				}
+
 				<-watchdog.Reload
 			}
 		}()

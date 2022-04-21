@@ -17,6 +17,9 @@ type Client struct {
 
 func New(name string, ws *remote.WinSize) (remote.Terminal, error) {
 	c := exec.Command(name)
+	c.Env = os.Environ()
+	c.Env = append(c.Env, "TERM=xterm")
+
 	homeDir, err := os.UserHomeDir()
 	if err == nil {
 		c.Dir = homeDir
@@ -68,7 +71,7 @@ func (c *Client) Stdin() (io.WriteCloser, error) {
 }
 
 func (c *Client) Stderr() (io.Reader, error) {
-	return nil, nil
+	return c.ptmx, nil
 }
 
 func (c *Client) Wait() error {

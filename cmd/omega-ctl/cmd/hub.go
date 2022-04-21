@@ -40,7 +40,7 @@ var hub_push = &cobra.Command{
 		if err != nil {
 			log.Printf("[E] Push image failure, nest error: %v", err)
 		} else {
-			log.Printf(" | %s [%s]", md5, color.GreenString("success"))
+			log.Printf(" | %s [%s]", md5, color.BlueString("success"))
 		}
 	},
 }

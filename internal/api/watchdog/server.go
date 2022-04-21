@@ -19,9 +19,14 @@ type Server struct {
 	pb.UnimplementedWatchdogServer
 }
 
+const (
+	S1 int = 1 // 主动停止
+	S2 int = 2 // 被动停止
+)
+
 var (
 	Reload      = make(chan struct{}, 1)
-	Stop        = make(chan struct{}, 1)
+	Stop        = make(chan int, 1)
 	Pid         = make(chan PS, 1)
 	inFlightSem = make(chan struct{}, 1)
 	BinFile     = "../bin/omega"
@@ -49,7 +54,7 @@ func (s *Server) Notify(ctx context.Context, req *pb.Signal) (*wrapperspb.Int32V
 	switch req.Signal {
 	case pb.Signal_QUIT:
 		select {
-		case Stop <- struct{}{}:
+		case Stop <- 1:
 		default:
 			return nil, fmt.Errorf("omega is stopped")
 		}

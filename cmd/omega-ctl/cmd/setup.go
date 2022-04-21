@@ -95,6 +95,9 @@ func apiWatchdogInstall(num int) (string, error) {
 loop:
 	for scanner.Scan() {
 		var line = strings.TrimSpace(scanner.Text())
+		if line == "" {
+			continue
+		}
 
 		var r = &resource{}
 		if err := json.Unmarshal([]byte(line), r); err != nil {
