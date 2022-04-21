@@ -131,6 +131,7 @@ package_o: fmt
 	@mkdir -p packages/omega/etc
 	@cp build/omega-install.sh packages/
 	@echo "$(CGREEN)=> Packaging binary(omega-watchdog)...$(CEND)"
+	go build -race ${LDFLAGS} ${GCFLAGS} -o packages/omega/bin/omega cmd/omega/main.go
 	go build -race ${LDFLAGS} ${GCFLAGS} -o packages/omega/bin/omega-watchdog cmd/omega-watchdog/main.go
 	@echo "$(CGREEN)=> Package Success!$(CEND)"
 	@cd packages; tar -zcvf omega.tar.gz omega > /dev/null

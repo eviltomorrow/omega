@@ -1,1 +1,3 @@
-{"outer_ip": "192.168.33.251", "inner_ip": "192.168.33.251", "port": 22, "username": "vagrant", "password": "vagrant", "private_key_path": "", "home_dir": "/home/vagrant", "endpoints": "192.168.12.140:2379", "group_name": "omega-01"}
+{"outer_ip": "192.168.95.118", "inner_ip": "192.168.95.118", "port": 22, "username": "root", "password": "sigmac95118", "private_key_path": "", "home_dir": "/root", "endpoints": "192.168.12.140:2379", "group_name": "omega-01"}
+{"outer_ip": "192.168.95.117", "inner_ip": "192.168.95.117", "port": 22, "username": "root", "password": "sigmac95117", "private_key_path": "", "home_dir": "/root", "endpoints": "192.168.12.140:2379", "group_name": "omega-01"}
+{"outer_ip": "192.168.95.112", "inner_ip": "192.168.95.112", "port": 22, "username": "root", "password": "sigmac95112", "private_key_path": "", "home_dir": "/root", "endpoints": "192.168.12.140:2379", "group_name": "omega-01"}
