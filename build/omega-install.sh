@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function output() {
-    echo -e "\"omega-watchdog\":\"${1}\", \"omega\":\"${2}\"}"
+    echo -e "{\"omega-watchdog\":\"${1}\", \"omega\":\"${2}\"}"
 }
 
 omega_home=$(pwd)/omega
@@ -112,7 +112,7 @@ function startupOmega() {
                 omega_watchdog_pid=$(cat ../var/run/omega-watchdog.pid)
                 omega_pid=$(cat ../var/run/omega.pid)
                 output ${omega_watchdog_pid} ${omega_pid}
-                exit 0
+                exit 0  
             fi
         fi
         sleep 1

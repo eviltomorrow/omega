@@ -13,7 +13,7 @@ var (
 	onece  sync.Once
 )
 
-func SetLog(path string) {
+func SetLog(path string) io.WriteCloser {
 	onece.Do(func() {
 		writer = &lumberjack.Logger{
 			Filename:   path,
@@ -24,11 +24,5 @@ func SetLog(path string) {
 		}
 		log.SetOutput(writer)
 	})
-}
-
-func CloseLog() error {
-	if writer != nil {
-		return writer.Close()
-	}
-	return nil
+	return writer
 }

@@ -98,12 +98,12 @@ func (c *Config) String() string {
 	return string(buf)
 }
 
-func FindPath(path string, suffix string) (string, error) {
+func FindPath(baseDir, path string, suffix string) (string, error) {
 	var possibleConf = []string{
 		path,
-		fmt.Sprintf("../etc/omega%s.conf", suffix),
-		fmt.Sprintf("./etc/omega%s.conf", suffix),
-		fmt.Sprintf("/etc/omega%s.conf", suffix),
+		filepath.Join(baseDir, fmt.Sprintf("../etc/omega%s.conf", suffix)),
+		filepath.Join(baseDir, fmt.Sprintf("./etc/omega%s.conf", suffix)),
+		filepath.Join(baseDir, fmt.Sprintf("/etc/omega%s.conf", suffix)),
 	}
 	for _, path := range possibleConf {
 		if path == "" {

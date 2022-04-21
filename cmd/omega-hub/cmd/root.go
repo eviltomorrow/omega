@@ -33,8 +33,8 @@ var root = &cobra.Command{
 		)
 		defer runAndExitCleanFuncs(code)
 
-		self.SetLog(filepath.Join(system.RootDir, "../log/error.log"))
-		registerCleanFuncs(self.CloseLog)
+		logWriter := self.SetLog(filepath.Join(system.RootDir, "../log/error.log"))
+		registerCleanFuncs(logWriter.Close)
 
 		for _, dir := range []string{
 			filepath.Join(system.RootDir, "../var/images"),
@@ -90,7 +90,7 @@ func Execute() {
 }
 
 func setupConfig() error {
-	path, err := conf.FindPath(cfgPath, "-hub")
+	path, err := conf.FindPath(system.RootDir, cfgPath, "-hub")
 	if err != nil {
 		return fmt.Errorf("find config path failure, nest error: %v", err)
 	}

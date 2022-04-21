@@ -1,6 +1,8 @@
 package file
 
 import (
+	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"net"
@@ -105,7 +107,30 @@ func (s *SCP) Run(c string, timeout time.Duration) ([]byte, error) {
 	}
 	defer session.Close()
 
-	return session.CombinedOutput(c)
+	var buf bytes.Buffer
+	session.Stderr = &buf
+	session.Stdout = &buf
+
+	if err := session.Start(c); err != nil {
+		return buf.Bytes(), nil
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	var esig = make(chan error, 1)
+	go func() {
+		esig <- session.Wait()
+		close(esig)
+	}()
+
+	select {
+	case <-ctx.Done():
+		session.Signal(ssh.SIGKILL)
+		return buf.Bytes(), fmt.Errorf("exec timeout")
+	case err := <-esig:
+		return buf.Bytes(), err
+	}
 }
 
 func (s *SCP) Close() {

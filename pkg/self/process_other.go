@@ -41,8 +41,8 @@ func RunDaemon(name string, args []string) error {
 	var cmd = &exec.Cmd{
 		Path:   "/proc/self/exe",
 		Args:   data,
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
+		Stdout: nil,
+		Stderr: nil,
 		Stdin:  os.Stdin,
 	}
 	return cmd.Start()

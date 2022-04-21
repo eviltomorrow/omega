@@ -3,3 +3,4 @@ examples/omega*
 packages/omega*
 examples/install-report-*
 tools/etcd/data*
+install-report-*

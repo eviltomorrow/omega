@@ -39,8 +39,8 @@ var root = &cobra.Command{
 		)
 		defer runAndExitCleanFuncs(code)
 
-		self.SetLog(filepath.Join(system.RootDir, "../log/error.log"))
-		registerCleanFuncs(self.CloseLog)
+		logWriter := self.SetLog(filepath.Join(system.RootDir, "../log/error.log"))
+		registerCleanFuncs(logWriter.Close)
 
 		if err := setupConfig(); err != nil {
 			code = 1
@@ -66,7 +66,7 @@ var root = &cobra.Command{
 		go func() {
 			if err := instance.Run(ctx, signal); err != nil {
 				log.Printf("[F] Run agent failure, nest error: %v\r\n", err)
-				self.CloseLog()
+				logWriter.Close()
 				os.Exit(1)
 			}
 		}()
@@ -112,7 +112,7 @@ func Execute() {
 }
 
 func setupConfig() error {
-	path, err := conf.FindPath(cfgFile, "")
+	path, err := conf.FindPath(system.RootDir, cfgFile, "")
 	if err != nil {
 		return fmt.Errorf("find config path failure, nest error: %v", err)
 	}

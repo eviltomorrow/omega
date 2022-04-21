@@ -26,7 +26,7 @@ var omega_install = &cobra.Command{
 		if path, err := apiWatchdogInstall(goroutines); err != nil {
 			log.Printf("[E] Install watchdog failure, nest error: %v", err)
 		} else {
-			log.Printf("[I] Install report, cat %s", path)
+			log.Printf("[I] Install complete, report: cat %s", path)
 		}
 	},
 }
@@ -142,9 +142,13 @@ loop:
 			for r := range p {
 				info, err := install(r, imageFile, shellFile)
 				if err != nil {
-					s <- fmt.Sprintf("[E] Install image failure, nest error: %v, resource: %v", err, r.String())
+					var msg = fmt.Sprintf("[E] Install image failure, resource: %v, nest error: %v", r.InnerIP, err)
+					s <- msg
+					log.Print(msg)
 				} else {
-					s <- fmt.Sprintf("[I] Install image success, info: %v", info)
+					var msg = fmt.Sprintf("[I] Install image success, resource: %v, info: %v", r.InnerIP, info)
+					s <- msg
+					log.Print(msg)
 				}
 			}
 			wait.Done()
@@ -183,6 +187,7 @@ func install(r *resource, imageFile string, shellFile string) (string, error) {
 		imagePath = filepath.Join(r.HomeDir, imageName)
 		shellPath = filepath.Join(r.HomeDir, shellName)
 	)
+
 	if err := scp.Upload(imageFile, imagePath); err != nil {
 		return "", err
 	}
@@ -192,6 +197,7 @@ func install(r *resource, imageFile string, shellFile string) (string, error) {
 
 	var c = fmt.Sprintf("cd %s; chmod a+x %s; ./%s -i %s -o %s -e %s -g %s", r.HomeDir, shellPath, shellName, r.InnerIP, r.OuterIP, r.Endpoints, r.GroupName)
 	buf, err := scp.Run(c, timeout)
+	fmt.Println("buf: ", string(buf), "err: ", err)
 	if err != nil {
 		return "", fmt.Errorf("error: %v, stdout: %v", err, tools.BytesToStringSlow(buf))
 	}

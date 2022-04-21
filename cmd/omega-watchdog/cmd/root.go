@@ -17,7 +17,6 @@ import (
 	"github.com/eviltomorrow/omega/internal/conf"
 	server "github.com/eviltomorrow/omega/internal/server/omega-watchdog"
 	"github.com/eviltomorrow/omega/internal/system"
-	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/eviltomorrow/omega/pkg/lock"
 	"github.com/eviltomorrow/omega/pkg/self"
@@ -42,8 +41,8 @@ var root = &cobra.Command{
 		)
 		defer runAndExitCleanFuncs(code)
 
-		self.SetLog(filepath.Join(system.RootDir, "../log/error.log"))
-		registerCleanFuncs(self.CloseLog)
+		logWriter := self.SetLog(filepath.Join(system.RootDir, "../log/error.log"))
+		registerCleanFuncs(logWriter.Close)
 
 		for _, dir := range []string{
 			filepath.Join(system.RootDir, "../var/run"),
@@ -120,14 +119,6 @@ var root = &cobra.Command{
 				watchdog.Reload <- struct{}{}
 			}
 
-			var writer = &lumberjack.Logger{
-				Filename:   filepath.Join(system.RootDir, "../log/error.log"),
-				MaxSize:    20,
-				MaxBackups: 10,
-				MaxAge:     28,
-				Compress:   true,
-			}
-
 			for range watchdog.Reload {
 				watchdog.Reload <- struct{}{}
 				select {
@@ -135,7 +126,7 @@ var root = &cobra.Command{
 				default:
 				}
 
-				cmd, err := self.RunChild("omega", []string{"-c", "omega.conf", "-p", pidFile}, writer)
+				cmd, err := self.RunChild("omega", []string{"-c", "omega.conf", "-p", pidFile}, logWriter)
 				if err != nil {
 					log.Printf("[Panic] [Reload] Run omega failure, nest error: %v\r\n", err)
 					watchdog.Pid <- watchdog.PS{Err: err}
@@ -239,7 +230,7 @@ func Execute() {
 }
 
 func setupConfig() error {
-	path, err := conf.FindPath(cfgFile, "")
+	path, err := conf.FindPath(system.RootDir, cfgFile, "")
 	if err != nil {
 		return fmt.Errorf("find config path failure, nest error: %v", err)
 	}
@@ -273,7 +264,7 @@ func setupVars() {
 var mut sync.Mutex
 
 func pullImageLatest() error {
-	_, err := os.Stat(server.BinFile)
+	_, err := os.Stat(filepath.Join(system.RootDir, server.BinFile))
 	if err != nil {
 		if !os.IsNotExist(err) {
 			return err
