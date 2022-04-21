@@ -100,19 +100,19 @@ func (s *SCP) Upload(localFile, remoteFile string) error {
 	return nil
 }
 
-func (s *SCP) Run(c string, timeout time.Duration) ([]byte, error) {
+func (s *SCP) Run(c string, timeout time.Duration) ([]byte, []byte, error) {
 	session, err := s.conn.NewSession()
 	if err != nil {
-		return nil, fmt.Errorf("create session failure, nest error: %v", err)
+		return nil, nil, fmt.Errorf("create session failure, nest error: %v", err)
 	}
 	defer session.Close()
 
-	var buf bytes.Buffer
-	session.Stderr = &buf
-	session.Stdout = &buf
+	var stdout, stderr bytes.Buffer
+	session.Stderr = &stdout
+	session.Stdout = &stderr
 
 	if err := session.Start(c); err != nil {
-		return buf.Bytes(), nil
+		return nil, nil, err
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
@@ -127,9 +127,9 @@ func (s *SCP) Run(c string, timeout time.Duration) ([]byte, error) {
 	select {
 	case <-ctx.Done():
 		session.Signal(ssh.SIGKILL)
-		return buf.Bytes(), fmt.Errorf("exec timeout")
+		return stdout.Bytes(), stderr.Bytes(), fmt.Errorf("exec timeout")
 	case err := <-esig:
-		return buf.Bytes(), err
+		return stdout.Bytes(), stderr.Bytes(), err
 	}
 }
 

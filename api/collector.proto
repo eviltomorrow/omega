@@ -12,8 +12,12 @@ service Collector {
 
 // The top-level container type that is encoded and sent over the wire.
 message MetricSet {
+  // outer_ip
+  string outer_ip = 1;
+  // inner_ip
+  string inner_ip = 2;
   // Each MetricFamily has one or more MetricPoints for a single Metric.
-  repeated MetricFamily metric_families = 1;
+  repeated MetricFamily metric_families = 3;
 }
 
 // One or more Metrics for a single MetricFamily, where each Metric

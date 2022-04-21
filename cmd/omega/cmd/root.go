@@ -119,7 +119,7 @@ func setupConfig() error {
 	if err := DefaultGlobal.LoadFile(path); err != nil {
 		return fmt.Errorf("load config with path[%s] failure, nest error: %v", path, err)
 	}
-	if err := conf.SetupLog(DefaultGlobal.Log, "agent.log"); err != nil {
+	if err := conf.SetupLog(DefaultGlobal.Log, "omega.log"); err != nil {
 		return fmt.Errorf("setup zlog config failure, nest error: %v", err)
 	}
 	return nil

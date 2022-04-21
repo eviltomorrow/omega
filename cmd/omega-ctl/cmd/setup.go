@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -196,20 +197,20 @@ func install(r *resource, imageFile string, shellFile string) (string, error) {
 	}
 
 	var c = fmt.Sprintf("cd %s; chmod a+x %s; ./%s -i %s -o %s -e %s -g %s", r.HomeDir, shellPath, shellName, r.InnerIP, r.OuterIP, r.Endpoints, r.GroupName)
-	buf, err := scp.Run(c, timeout)
-	fmt.Println("buf: ", string(buf), "err: ", err)
+	stdout, stderr, err := scp.Run(c, timeout)
+	var buf bytes.Buffer
+	buf.WriteString(tools.BytesToStringSlow(stdout))
+	buf.WriteString(tools.BytesToStringSlow(stderr))
 	if err != nil {
-		return "", fmt.Errorf("error: %v, stdout: %v", err, tools.BytesToStringSlow(buf))
+		return "", fmt.Errorf("error: %v, output: %v", err, buf.String())
 	}
-	if len(buf) != 0 {
-		msg := tools.BytesToStringSlow(buf)
-		isJson := gjson.Valid(msg)
+	if len(buf.Bytes()) != 0 {
+		isJson := gjson.Valid(buf.String())
 		if isJson {
-			return msg, nil
+			return buf.String(), nil
 		}
-		return "", fmt.Errorf("%s", msg)
+		return "", fmt.Errorf("%s", buf.String())
 	}
-
 	return "", fmt.Errorf("[panic] stdout: nil")
 }
 

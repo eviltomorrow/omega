@@ -7,6 +7,7 @@ import (
 
 	"github.com/eviltomorrow/omega"
 	"github.com/eviltomorrow/omega/internal/api/collector/pb"
+	server "github.com/eviltomorrow/omega/internal/server/omega"
 	"github.com/eviltomorrow/omega/metric"
 	"github.com/eviltomorrow/omega/pkg/self"
 	"github.com/eviltomorrow/omega/pkg/zlog"
@@ -92,6 +93,8 @@ func (gc *GrpcClient) Start() {
 			if !ok {
 				continue
 			}
+			data.OuterIp = server.OuterIP
+			data.InnerIp = server.InnerIP
 
 			if err := gc.pc.Send(data); err != nil {
 				gc.pc.CloseSend()

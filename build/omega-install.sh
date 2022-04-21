@@ -56,10 +56,10 @@ function prepareEnv() {
             exit 0
         fi
         if [ -e "omega/var/run/omega-watchdog.pid" ]; then
-            kill $(cat omega/var/run/omega-watchdog.pid)
+            kill -3 $(cat omega/var/run/omega-watchdog.pid)
         fi
         if [ -e "omega/var/run/omega.pid" ]; then
-            kill $(cat omega/var/run/omega.pid)
+            kill -3  $(cat omega/var/run/omega.pid)
         fi
 
         rm -rf omega
