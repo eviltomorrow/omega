@@ -138,5 +138,5 @@ package_o: fmt
 	@rm -rf packages/omega
 	@mkdir -p examples/omega-ctl/image
 	@cp build/omega-install.sh examples/omega-ctl/image
-	@cp build/resource.json examples/omega-ctl/image
+	@cp build/resource.txt examples/omega-ctl/image
 	@cp packages/omega.tar.gz examples/omega-ctl/image

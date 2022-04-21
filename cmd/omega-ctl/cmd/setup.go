@@ -57,7 +57,7 @@ func init() {
 
 func apiWatchdogInstall(num int) (string, error) {
 	var (
-		resourceFile = filepath.Join(imageDir, "resource.json")
+		resourceFile = filepath.Join(imageDir, "resource.txt")
 		imageFile    = filepath.Join(imageDir, "omega.tar.gz")
 		shellFile    = filepath.Join(imageDir, "omega-install.sh")
 	)
