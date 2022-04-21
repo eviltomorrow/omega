@@ -3,6 +3,7 @@ package grpclb
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/eviltomorrow/omega/pkg/zlog"
@@ -56,7 +57,10 @@ func Register(service string, inner_ip, outer_ip string, port int, endpoints []s
 		return nil, err
 	}
 
-	var signal = make(chan struct{}, 1)
+	var (
+		signal = make(chan struct{}, 1)
+		mut    sync.Mutex
+	)
 	go func() {
 	keep:
 		for {
@@ -77,7 +81,9 @@ func Register(service string, inner_ip, outer_ip string, port int, endpoints []s
 
 	release:
 		zlog.Error("Etcd status is offline: register service retrying...", zap.String("key", key), zap.String("value", value))
+		mut.Lock()
 		keepAlive, leaseID, err = registerRetry(client, key, value, ttl)
+		mut.Unlock()
 		if err != nil {
 			zlog.Error("Retrying register service to etcd failure", zap.Error(err))
 			time.Sleep(10 * time.Second)
@@ -88,6 +94,9 @@ func Register(service string, inner_ip, outer_ip string, port int, endpoints []s
 	}()
 	close := func() {
 		signal <- struct{}{}
+		mut.Lock()
+		defer mut.Unlock()
+
 		if leaseID != nil {
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()

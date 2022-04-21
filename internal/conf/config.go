@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
+	"github.com/eviltomorrow/omega/internal/system"
 	"github.com/eviltomorrow/omega/pkg/zlog"
 )
 
@@ -121,6 +122,7 @@ func FindPath(baseDir, path string, suffix string) (string, error) {
 }
 
 func SetupLog(log Log, fileName string) error {
+	log.Dir = filepath.Join(system.RootDir, log.Dir)
 	global, prop, err := zlog.InitLogger(&zlog.Config{
 		Level:            log.Level,
 		Format:           log.Format,
