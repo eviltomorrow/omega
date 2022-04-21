@@ -18,7 +18,8 @@ import (
 )
 
 var (
-	DefaultDialTimeout = 5 * time.Second
+	DefaultDialTimeout      = 5 * time.Second
+	DefaulRtotateStreamTime = 60 * time.Minute
 )
 
 type GrpcClient struct {
@@ -88,6 +89,7 @@ func (gc *GrpcClient) Close() error {
 
 func (gc *GrpcClient) Start() {
 	go func() {
+		var begin = time.Now()
 		for metrics := range gc.buffer {
 			data, ok := metric.SwitchMetricsToMetricSet(metrics)
 			if !ok {
@@ -106,15 +108,36 @@ func (gc *GrpcClient) Start() {
 					if err := gc.Connect(); err == nil {
 						break
 					}
-					zlog.Warn("Prepare to reconnect to collector", zap.String("retry-times(cost)", fmt.Sprintf("%ds(+%.0fs)", num, DefaultDialTimeout.Seconds())))
+					zlog.Warn("[Disconnect]Prepare to reconnect to collector", zap.String("retry-times(cost)", fmt.Sprintf("%ds(+%.0fs)", num, DefaultDialTimeout.Seconds())))
 
 					if num >= 2<<7 {
 						num = 1
 					} else {
 						num = num * 2
 					}
-
 				}
+				begin = time.Now()
+			}
+
+			if time.Since(begin) > DefaulRtotateStreamTime {
+				gc.pc.CloseSend()
+				gc.closef()
+
+				var num = 1
+				for {
+					time.Sleep(time.Duration(num) * time.Second)
+					if err := gc.Connect(); err == nil {
+						break
+					}
+					zlog.Warn("[Reconnect]Prepare to reconnect to collector", zap.String("retry-times(cost)", fmt.Sprintf("%ds(+%.0fs)", num, DefaultDialTimeout.Seconds())))
+
+					if num >= 2<<7 {
+						num = 1
+					} else {
+						num = num * 2
+					}
+				}
+				begin = time.Now()
 			}
 			// zlog.Info("Gather and send metric to collector success", zap.Int("metrics-count", len(data.MetricFamilies)))
 		}
