@@ -2,6 +2,8 @@ package grpclb
 
 import (
 	"context"
+	"math/rand"
+	"time"
 
 	"go.etcd.io/etcd/api/v3/mvccpb"
 	clientv3 "go.etcd.io/etcd/client/v3"
@@ -72,6 +74,14 @@ func (r *Resolver) getAddresses() []resolver.Address {
 	addresses := make([]resolver.Address, 0, len(r.addresses))
 	for _, address := range r.addresses {
 		addresses = append(addresses, address)
+	}
+
+	// 洗牌算法
+	rand.Seed(time.Now().UTC().UnixNano())
+	for i := len(addresses); i > 0; i-- {
+		last := i - 1
+		idx := rand.Intn(i)
+		addresses[last], addresses[idx] = addresses[idx], addresses[last]
 	}
 	return addresses
 }
