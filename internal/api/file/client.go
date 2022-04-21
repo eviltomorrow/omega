@@ -7,10 +7,12 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/eviltomorrow/omega/internal/api/file/pb"
 	"github.com/eviltomorrow/omega/pkg/bar"
 	"github.com/eviltomorrow/omega/pkg/file"
+	"golang.org/x/time/rate"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/types/known/wrapperspb"
@@ -81,11 +83,15 @@ func Upload(target string, local string, remote string) error {
 		return err
 	}
 
-	bar, counter := bar.NewProgressbar(int(remoteFi.Size), "Upload", remote)
+	bar, counter := bar.NewProgressbar(int(localFi.Size()), "Upload", remote)
 	defer bar.Close()
 	defer close(counter)
 
-	var buf [1024 * 8]byte
+	var (
+		buf     [1024 * 8]byte
+		limiter = rate.NewLimiter(rate.Every(time.Second/1000), 1)
+	)
+
 	for {
 		n, err := localF.Read(buf[0:])
 		if err == io.EOF {
@@ -94,9 +100,12 @@ func Upload(target string, local string, remote string) error {
 		if err != nil {
 			return err
 		}
+		limiter.WaitN(context.Background(), 1)
+
 		if err := writer.Send(&pb.Buffer{Buf: buf[:n]}); err != nil {
 			return err
 		}
+
 		counter <- n
 	}
 	if _, err := writer.CloseAndRecv(); err != nil && err != io.EOF {
@@ -110,7 +119,7 @@ func Upload(target string, local string, remote string) error {
 	return nil
 }
 
-func Download(target string, remote string, local string) error {
+func Download(target string, local string, remote string) error {
 	stub, destroy, err := NewClient(target)
 	if err != nil {
 		return err
@@ -129,6 +138,7 @@ func Download(target string, remote string, local string) error {
 	if err != nil && !os.IsNotExist(err) {
 		return err
 	}
+
 	if err == nil {
 		if localFi.IsDir() {
 			local = filepath.Join(local, filepath.Base(remoteFi.Name))

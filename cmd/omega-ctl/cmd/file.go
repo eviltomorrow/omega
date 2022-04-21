@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/eviltomorrow/omega/internal/api/file"
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
@@ -15,6 +16,8 @@ var file_upload = &cobra.Command{
 		err := apiFileUpload()
 		if err != nil {
 			log.Printf("[E] Upload to omega failure, nest error: %v", err)
+		} else {
+			log.Printf("[%s]", color.BlueString("OK"))
 		}
 	},
 }
@@ -27,6 +30,8 @@ var file_download = &cobra.Command{
 		err := apiFileDownload()
 		if err != nil {
 			log.Printf("[E] Download from omega failure, nest error: %v", err)
+		} else {
+			log.Printf("[%s]", color.BlueString("OK"))
 		}
 	},
 }

@@ -1,12 +1,12 @@
 package file
 
 import (
+	"context"
 	"io"
 	"os"
-)
+	"time"
 
-const (
-	size = 8 * 1024
+	"golang.org/x/time/rate"
 )
 
 func Write(path string, mode os.FileMode, data chan []byte, signal chan error) error {
@@ -51,8 +51,9 @@ func Read(path string) (os.FileInfo, chan []byte, chan error, error) {
 	go func() {
 		defer f.Close()
 
+		var limiter = rate.NewLimiter(rate.Every(time.Second/1000), 1)
 		for {
-			var buf [size]byte
+			var buf [1024 * 8]byte
 			n, err := f.Read(buf[0:])
 			if err == io.EOF {
 				break
@@ -61,6 +62,7 @@ func Read(path string) (os.FileInfo, chan []byte, chan error, error) {
 				signal <- err
 				break
 			}
+			limiter.WaitN(context.Background(), 1)
 
 			p <- buf[:n]
 		}
