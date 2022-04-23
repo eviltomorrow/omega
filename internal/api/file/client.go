@@ -37,7 +37,7 @@ func Upload(target string, local string, remote string) error {
 		return err
 	}
 	if localFi.IsDir() {
-		return fmt.Errorf("local: %s is a folder", local)
+		return fmt.Errorf("local: %s has same name folder", local)
 	}
 	localMD5, err := file.CalculateMD5(local)
 	if err != nil {

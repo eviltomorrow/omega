@@ -6,6 +6,7 @@ require (
 	github.com/BurntSushi/toml v1.1.0
 	github.com/benbjohnson/clock v1.3.0
 	github.com/creack/pty v1.1.18
+	github.com/fatih/color v1.13.0
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-version v1.4.0
 	github.com/json-iterator/go v1.1.12
@@ -38,6 +39,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
+	github.com/mattn/go-colorable v0.1.9 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
