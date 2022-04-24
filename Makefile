@@ -140,3 +140,9 @@ package_o: fmt
 	@cp build/omega-install.sh examples/omega-ctl/image
 	@cp build/resource.txt examples/omega-ctl/image
 	@cp packages/omega.tar.gz examples/omega-ctl/image
+
+.PHONY: mod
+mod:export GO111MODULE=on
+mod:
+	@echo "$(CGREEN)=> go mod tidy...$(CEND)"
+	@go mod tidy
