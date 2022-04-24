@@ -64,6 +64,7 @@ function prepareEnv() {
 
         rm -rf omega/bin
         rm -rf omega/var
+        rm -rf omega/log/error.log
     fi 
 }
 
