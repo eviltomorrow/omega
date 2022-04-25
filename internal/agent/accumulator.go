@@ -31,6 +31,11 @@ func (ac *accumulator) AddMetric(metrics []omega.Metric) {
 	select {
 	case ac.buffer <- metrics:
 	default:
+		<-ac.buffer
+		select {
+		case ac.buffer <- metrics:
+		default:
+		}
 		zlog.Warn("Accumulator's buffer is overflow, the metrics will be ignore", zap.String("metrics", withMetricsString(metrics)))
 	}
 }
