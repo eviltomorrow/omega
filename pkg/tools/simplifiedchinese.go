@@ -104,8 +104,8 @@ func IsUTF8(data []byte) bool {
 			i++
 			continue
 		} else if num := preNum(data[i]); num > 2 {
-			i++
-			for j := 0; j < num-1; j++ {
+			// i++
+			for j := 0; j < num-1 && i < len(data); j++ {
 				if (data[i] & 0xc0) != 0x80 {
 					return false
 				}

@@ -30,13 +30,14 @@ func NewProgressbar(size int, mode string, desc string) (*progressbar.ProgressBa
 		if width > 20 {
 			width = width - 20
 		}
-		// blank
-		if width > 10 {
-			width = width - 10
-		}
+
 		// success
 		if width > 6 {
 			width = width - 6
+		}
+
+		if width > len(desc) {
+			width = width - len(desc)
 		}
 	}
 
